@@ -1,4 +1,5 @@
 import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.numerics.{sigmoid, exp}
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
@@ -13,10 +14,16 @@ class Network(sizes: List[Int]) {
   val biases : List[DenseVector[Double]] = buildBiases(sizes)
 
   val weights : List[DenseMatrix[Double]] = buildWeights(sizes)
+
+  def feedForward(inputs : DenseVector[Double]) : DenseVector[Double] = {
+    var a : DenseVector[Double] = inputs
+    weights.zip(biases).foreach({ case (w, b) => a = sigmoid((w * a) + b) })
+    a
+  }
 }
 
 object Network {
-  val RANDOM = new Random
+  val RANDOM = new Random(1337)
 
   /**
    * Builds a vector of node biases for all layers except the input layer
